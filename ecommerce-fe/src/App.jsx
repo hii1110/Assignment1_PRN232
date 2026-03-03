@@ -30,7 +30,7 @@ export default function App() {
   const [confirm, setConfirm] = useState(null)
 
   // navigation
-  const [page, setPage] = useState('home') // 'home' | 'product' | 'cart' | 'checkout' | 'orders'
+  const [view, setView] = useState('home') // 'home' | 'product' | 'cart' | 'checkout' | 'orders'
   const [selectedProduct, setSelectedProduct] = useState(null)
 
   // auth
@@ -198,7 +198,7 @@ export default function App() {
       setCart({ items: [], totalAmount: 0 })
       setSelectedOrder(detail)
       await loadOrders()
-      setPage('orders')
+      setView('orders')
       setToast({ open: true, msg: lang === 'vi' ? 'Đã tạo đơn hàng' : 'Order created', type: 'success' })
     } catch (err) {
       setToast({ open: true, msg: err.message || (lang === 'vi' ? 'Lỗi đặt hàng' : 'Order error'), type: 'error' })
@@ -221,13 +221,13 @@ export default function App() {
   // auto-load when navigating to cart / checkout / orders
   useEffect(() => {
     if (!isLoggedIn) return
-    if (page === 'cart' || page === 'checkout') {
+    if (view === 'cart' || view === 'checkout') {
       loadCart()
     }
-    if (page === 'orders') {
+    if (view === 'orders') {
       loadOrders()
     }
-  }, [page, isLoggedIn]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [view, isLoggedIn]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = useMemo(() => {
     let list = items
@@ -291,25 +291,25 @@ export default function App() {
             <div className="text-lg font-semibold tracking-tight">{t('title')}</div>
             {/* Simple nav placeholder for future pages */}
             <nav className="hidden md:flex items-center gap-3 text-sm text-base-mute">
-              <button
-                type="button"
-                className={`hover:text-base-text ${page === 'home' ? 'text-base-text' : 'opacity-70'}`}
-                onClick={() => { setPage('home'); setSelectedProduct(null) }}
-              >
+                  <button
+                    type="button"
+                    className={`hover:text-base-text ${view === 'home' ? 'text-base-text' : 'opacity-70'}`}
+                    onClick={() => { setView('home'); setSelectedProduct(null) }}
+                  >
                 {lang === 'vi' ? 'Trang chủ' : 'Home'}
               </button>
-              <button
-                type="button"
-                className={`hover:text-base-text ${page === 'cart' ? 'text-base-text' : 'opacity-70'}`}
-                onClick={() => setPage('cart')}
-              >
+                  <button
+                    type="button"
+                    className={`hover:text-base-text ${view === 'cart' ? 'text-base-text' : 'opacity-70'}`}
+                    onClick={() => setView('cart')}
+                  >
                 {lang === 'vi' ? 'Giỏ hàng' : 'Cart'}
               </button>
-              <button
-                type="button"
-                className={`hover:text-base-text ${page === 'orders' ? 'text-base-text' : 'opacity-70'}`}
-                onClick={() => setPage('orders')}
-              >
+                  <button
+                    type="button"
+                    className={`hover:text-base-text ${view === 'orders' ? 'text-base-text' : 'opacity-70'}`}
+                    onClick={() => setView('orders')}
+                  >
                 {lang === 'vi' ? 'Đơn hàng' : 'Orders'}
               </button>
             </nav>
@@ -358,7 +358,7 @@ export default function App() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-5">
-        {page === 'home' && (
+        {view === 'home' && (
           <>
             {/* Search + quick actions */}
             <Card>
@@ -448,7 +448,7 @@ export default function App() {
                   items={pageItems}
                   onEdit={setEditing}
                   onDelete={setConfirm}
-                  onView={(p) => { setSelectedProduct(p); setPage('product') }}
+                  onView={(p) => { setSelectedProduct(p); setView('product') }}
                   canManage={isLoggedIn}
                 />
                 <Pagination
@@ -463,7 +463,7 @@ export default function App() {
           </>
         )}
 
-        {page === 'product' && selectedProduct && (
+        {view === 'product' && selectedProduct && (
           <Card>
             <div className="p-4 flex flex-col gap-4 md:flex-row">
               <div className="md:w-1/3 flex flex-col items-center gap-3">
@@ -490,7 +490,7 @@ export default function App() {
                   {selectedProduct.description}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
-                  <Button variant="ghost" onClick={() => { setSelectedProduct(null); setPage('home') }}>
+                  <Button variant="ghost" onClick={() => { setSelectedProduct(null); setView('home') }}>
                     {lang === 'vi' ? '← Quay lại' : '← Back to list'}
                   </Button>
                   <Button onClick={() => handleAddToCart(selectedProduct.id)}>
@@ -502,14 +502,14 @@ export default function App() {
           </Card>
         )}
 
-        {page === 'cart' && (
+        {view === 'cart' && (
           <Card>
             <div className="p-4 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">
                   {lang === 'vi' ? 'Giỏ hàng' : 'Shopping cart'}
                 </h2>
-                <Button variant="ghost" onClick={() => setPage('home')}>
+                <Button variant="ghost" onClick={() => setView('home')}>
                   {lang === 'vi' ? '← Tiếp tục mua sắm' : '← Continue shopping'}
                 </Button>
               </div>
@@ -584,7 +584,7 @@ export default function App() {
                   <div className="flex justify-end">
                     <Button
                       disabled={!cart.items.length}
-                      onClick={() => setPage('checkout')}
+                      onClick={() => setView('checkout')}
                     >
                       {lang === 'vi' ? 'Tiến hành đặt hàng' : 'Proceed to checkout'}
                     </Button>
@@ -595,14 +595,14 @@ export default function App() {
           </Card>
         )}
 
-        {page === 'checkout' && (
+        {view === 'checkout' && (
           <Card>
             <div className="p-4 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">
                   {lang === 'vi' ? 'Xác nhận đơn hàng' : 'Checkout'}
                 </h2>
-                <Button variant="ghost" onClick={() => setPage('cart')}>
+                <Button variant="ghost" onClick={() => setView('cart')}>
                   {lang === 'vi' ? '← Quay lại giỏ hàng' : '← Back to cart'}
                 </Button>
               </div>
@@ -649,7 +649,7 @@ export default function App() {
           </Card>
         )}
 
-        {page === 'orders' && (
+        {view === 'orders' && (
           <div className="grid gap-4 md:grid-cols-[2fr,minmax(0,1.4fr)]">
             <Card>
               <div className="p-4 space-y-3">
