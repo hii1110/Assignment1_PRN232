@@ -769,7 +769,7 @@ export default function App() {
                     {selectedOrder.status !== 'paid' && (
                       <div className="flex justify-end">
                         <Button onClick={() => handlePayOrder(selectedOrder.id)}>
-                          {lang === 'vi' ? 'Giả lập thanh toán' : 'Simulate payment'}
+                          {lang === 'vi' ? 'Thanh toán' : 'Simulate payment'}
                         </Button>
                       </div>
                     )}
